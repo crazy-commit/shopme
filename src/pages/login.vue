@@ -4,7 +4,7 @@
             <div>
                 <div class="left-t">欢迎回来</div>
                 <div class="left-b">这里是张先生的店，欢迎您的访问，查看网页源代码请
-                    <a href="" class="text-blue-200">点击这里</a>
+                    <a href="https://github.com/crazy-commit/shopme" target="_blank" class="text-blue-200">点击这里</a>
                 </div>
             </div>
         </el-col>
@@ -40,6 +40,16 @@
 
 <script setup>
 import { ref,reactive } from 'vue'
+// 引入饿了么消息提示框
+import { ElMessage } from 'element-plus'
+
+// 引入登录函数的网络请求
+import { login } from '../api/manage';
+
+// 引入路由状态
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
 
 const form = reactive({
   username: '',
@@ -67,7 +77,18 @@ const onSubmit = () => {
         if(!valid) {
             return false
         }
-        console.log('验证通过');
+        login(form.username,form.password).then(res => {
+            // 登录接口请求成功的结果
+            router.push('/')
+            ElMessage({
+                message: '恭喜，登录成功',
+                type: 'success',
+            })
+            console.log(res.data.data);
+        }).catch(err => {
+            // 请求失败的结果
+            ElMessage.error(err.response.data.msg)
+        })
     })
 }
 </script>
